@@ -2,11 +2,11 @@ name: CI Workflow
 on:
   push:
     branches: [ main ]
-  pull:
+  pull_request:
     branches: [ development ]
 jobs:
   test:
-    runs-on: debian-stretch
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:12
@@ -54,7 +54,7 @@ jobs:
           bundle exec rake test
   deploy: 
     name: CD Workflow -> deploying to Scaleway VPS
-    runs-on: debian-stretch
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Push to server
@@ -63,23 +63,22 @@ jobs:
           host: ${{ secrets.PCM_SSH_SERVER_IP }}
           username: ${{ secrets.PCM_SSH_USERNAME }}
           key: ${{ secrets.PCM_SSH_KEY }}
-    script:
-    - name: Set PostgreSQL Connection details
-      env:
-        PCM_DB_TEST: ${{ secrets.REMOTE_DB_NAME }}
-        PCM_DB_HOST: ${{ secrets.PCM_SSH_SERVER_IP }}
-        PCM_DB_USER: ${{ secrets.TEST_DB_USER }}
-        PCM_DB_PASS_LOCAL: ${{ secrets.REMOTE_DB_PASSWORD }}
-      run: |
-        cd ${{ secrets.OS_PATH }}
-        mkdir {{ secrets.APP_PATH }}
-        cd ${{ secrets.APP_PATH }}
-        git clone git@github.com:bafrimpong/vps-github-actions.git
-        git pull origin main
-        git status
-        rbenv global ruby-2.6.7
-        bundle install
-        rails db:setup
-        rails db:seed
-        rails s -p 3001
+      - name: Set PostgreSQL Connection details
+        env:
+          PCM_DB_TEST: ${{ secrets.REMOTE_DB_NAME }}
+          PCM_DB_HOST: ${{ secrets.PCM_SSH_SERVER_IP }}
+          PCM_DB_USER: ${{ secrets.TEST_DB_USER }}
+          PCM_DB_PASS_LOCAL: ${{ secrets.REMOTE_DB_PASSWORD }}
+        run: |
+          cd ${{ secrets.OS_PATH }}
+          mkdir {{ secrets.APP_PATH }}
+          cd ${{ secrets.APP_PATH }}
+          git clone git@github.com:bafrimpong/vps-github-actions.git
+          git pull origin main
+          git status
+          rbenv global ruby-2.6.7
+          bundle install
+          rails db:setup
+          rails db:seed
+          rails s -p 3001
 
