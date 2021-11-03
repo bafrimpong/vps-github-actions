@@ -81,5 +81,5 @@ jobs:
         bundle install
         rails db:setup
         rails db:seed
-        rails s -p 3001 RAILS_ENV=test
+        rails s -p 3001
 
