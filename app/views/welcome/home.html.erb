@@ -1,0 +1,5 @@
+
+<% @welcome.each do | w | %>
+        <h1><%= w.try(:header_text) %></h1>
+        <p><%= w.try(:page_text) %></p>
+<% end %>

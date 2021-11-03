@@ -1,0 +1,2 @@
+class WelcomPage < ApplicationRecord
+end
