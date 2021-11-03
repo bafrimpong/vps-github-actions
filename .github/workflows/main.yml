@@ -6,7 +6,7 @@ on:
     branches: [ development ]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     services:
       postgres:
         image: postgres:12
@@ -54,7 +54,7 @@ jobs:
           bundle exec rake test
   deploy: 
     name: CD Workflow -> deploying to Scaleway VPS
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v1
       - name: Push to server
