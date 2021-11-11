@@ -6,13 +6,13 @@ on:
     branches: [ development ]
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:12
         ports: ["5432:5432"]
         env:
-          POSTGRES_PASSWORD: password
+          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
         options: >-
           --health-cmd pg_isready 
           --health-interval 10s 
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
         with:
-          ruby-version: 2.6.7
+          ruby-version: 2.7.1
       - name: Install PostgreSQL 12 client
         run: |
           sudo apt-get -yqq install libpq-dev
