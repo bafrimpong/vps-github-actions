@@ -11,10 +11,10 @@ jobs:
       postgres:
         image: postgres:12
         ports: ["5432:5432"]
-        # env:
-        #   PG_USER: postgres
-        #   PG_PASSWORD: postgres19
-        #   PG_DBTEST: pcmtest_test
+        env:
+          PG_USER: postgres
+          PG_PASSWORD: postgres19
+          PG_DBTEST: pcmtest_test
         options: >-
           --health-cmd pg_isready 
           --health-interval 10s 
@@ -49,17 +49,11 @@ jobs:
 
       - name: Setup postgres database
         env:
-          # PCM_DB_TEST: ${{ secrets.TEST_DB_NAME }}
-          # PCM_DB_HOST: ${{ secrets.TEST_DB_HOST }}
-          # PCM_DB_USER: ${{ secrets.TEST_DB_USER }}
-          # PCM_DB_PASS_LOCAL: ${{ secrets.TEST_DB_PASSWORD }}
           RAILS_ENV: test
           PG_HOST: localhost
           PG_USER: postgres
           PG_PASSWORD: postgres
           PG_PORT: ${{ job.services.postgres.ports[5432] }}
-          # WITH_COVERAGE: true
-          # DISABLE_SPRING: 1
         run: |
           bundle exec rails db:create
           bundle exec rails db:migrate
