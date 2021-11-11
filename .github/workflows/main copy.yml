@@ -10,13 +10,11 @@ jobs:
     services:
       postgres:
         image: postgres:12
-        ports: ["5432:5432"]
-        env:
-          PG_PASSWORD: postgres19
+        ports: ['5432:5432']
         options: >-
-          --health-cmd pg_isready 
-          --health-interval 10s 
-          --health-timeout 5s 
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
     steps:
       - name: Checkout repository
@@ -51,7 +49,7 @@ jobs:
           PG_HOST: localhost
           PG_USER: postgres
           PG_PASSWORD: postgres
-          PG_PORT: 5435 #${{ job.services.postgres.ports[5432] }}
+          PG_PORT: ${{ job.services.postgres.ports[5432] }}
         run: |
           bundle exec rails db:create
           bundle exec rails db:migrate
