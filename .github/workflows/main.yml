@@ -11,10 +11,10 @@ jobs:
       postgres:
         image: postgres:12
         ports: ["5432:5432"]
-        env:
-          PG_USER: postgres
-          PG_PASSWORD: postgres19
-          PG_DBTEST: pcmtest_test
+        # env:
+        #   PG_USER: postgres
+        #   PG_PASSWORD: postgres19
+        #   PG_DBTEST: pcmtest_test
         options: >-
           --health-cmd pg_isready 
           --health-interval 10s 
