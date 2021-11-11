@@ -52,7 +52,7 @@ jobs:
           chmod u+x bin/rails
           bin/rails db:setup
           bin/rails db:seed
-          bundle exec rake test
+          bin/rails server RAILS_ENV=test
   deploy: 
     name: CD Workflow -> deploying to Scaleway VPS
     runs-on: self-hosted
