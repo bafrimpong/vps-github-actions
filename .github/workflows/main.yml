@@ -48,6 +48,7 @@ jobs:
           # PCM_DB_PASS_LOCAL: ${{ secrets.TEST_DB_PASSWORD }}
           PGHOST: 127.0.0.1
           PGUSER: postgres
+          PGPASSWORD: postgres
           RAILS_ENV: test
           # WITH_COVERAGE: true
           # DISABLE_SPRING: 1
