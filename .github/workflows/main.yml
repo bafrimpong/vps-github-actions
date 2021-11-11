@@ -35,17 +35,19 @@ jobs:
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-
-      - name: Bundle Install - build and test with rake
+      - name: Install bundler
         run: |
           # bundle config path vendor/bundle
           gem install bundler
           bundle install --jobs 4 --retry 3
       - name: Run test
         env:
-          PCM_DB_TEST: ${{ secrets.TEST_DB_NAME }}
-          PCM_DB_HOST: ${{ secrets.TEST_DB_HOST }}
-          PCM_DB_USER: ${{ secrets.TEST_DB_USER }}
-          PCM_DB_PASS_LOCAL: ${{ secrets.TEST_DB_PASSWORD }}
+          # PCM_DB_TEST: ${{ secrets.TEST_DB_NAME }}
+          # PCM_DB_HOST: ${{ secrets.TEST_DB_HOST }}
+          # PCM_DB_USER: ${{ secrets.TEST_DB_USER }}
+          # PCM_DB_PASS_LOCAL: ${{ secrets.TEST_DB_PASSWORD }}
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
           RAILS_ENV: test
           # WITH_COVERAGE: true
           # DISABLE_SPRING: 1
