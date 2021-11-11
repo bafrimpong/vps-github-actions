@@ -23,11 +23,11 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV['PCM_DB_DEV'] %>
-  username: <%= ENV['PCM_DB_USER'] %>
-  password: <%= ENV['PCM_DB_PASS_LOCAL'] %> 
-  port: <%= ENV['PCM_DB_PORT'] %>
-  host: <%= ENV['PCM_DB_HOST'] %>
+  database: <%= ENV['PG_DBDEV'] %>
+  username: <%= ENV['PG_USER'] %>
+  password: <%= ENV['PG_PASSWORD'] %> 
+  port: <%= ENV['PG_PORT'] %>
+  host: <%= ENV['PG_HOST'] %>
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -61,11 +61,11 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: "<%= ENV['PCM_DB_TEST'] %>"
-  username: <%= ENV['PCM_DB_USER'] %>
-  password: <%= ENV['PCM_DB_PASS_LOCAL'] %> 
-  port: <%= ENV['PCM_DB_PORT'] %>
-  host: <%= ENV['PCM_DB_HOST'] %>
+  database: "<%= ENV['PG_DBTEST'] %>"
+  username: <%= ENV['PG_USER'] %>
+  password: <%= ENV['PG_PASSWORD'] %> 
+  port: <%= ENV['PG_PORT'] %>
+  host: <%= ENV['PG_HOST'] %>
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.
@@ -88,8 +88,8 @@ test:
 #
 production:
   <<: *default
-  database: <%= ENV['PCM_DB_PROD'] %>
-  username: <%= ENV['PCM_DB_USER'] %>
-  password: <%= ENV['PCM_DB_PASS_LOCAL'] %> 
-  port: <%= ENV['PCM_DB_PORT'] %>
-  host: <%= ENV['PCM_DB_HOST'] %>
+  database: <%= ENV['PG_DBPROD'] %>
+  username: <%= ENV['PG_USER'] %>
+  password: <%= ENV['PG_PASSWORD'] %> 
+  port: <%= ENV['PG_PORT'] %>
+  host: <%= ENV['PG_HOST'] %>
