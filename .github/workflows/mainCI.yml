@@ -37,20 +37,22 @@ jobs:
             restore-keys: |
               ${{ runner.os }}-gems-
           
-        - name: Bundle Install
+        - name: Run Bundle Install
+          env:
+            RAILS_ENV: test
           run: |
             bundle config path vendor/bundle
             gem install bundler
             bundle install --jobs 4 --retry 3
-        - name: Run Tests
+        
+        - name: Build and test with RSpec / Minitest
           env:
-            PG_HOST: localhost
+            RAILS_ENV: test
+            # PG_HOST: localhost
             PG_USER: postgres
             PG_PASSWORD: postgres19
-            PG_DATABASE: pcmtest_test
-            RAILS_ENV: test
-            # WITH_COVERAGE: true
-            # DISABLE_SPRING: 1
+            # PG_DATABASE: pcmtest_test
+            # PG_PORT: ${{ job.services.postgres.ports[5432] }}
           run: |
             bundle exec rails db:create
             bundle exec rails db:migrate
