@@ -12,7 +12,7 @@ jobs:
             image: postgres:12
             ports: ["5432:5432"]
             env:
-              POSTGRES_PASSWORD: postgres
+              PG_PASSWORD: postgres19
             options: >-
               --health-cmd pg_isready 
               --health-interval 10s 
@@ -43,10 +43,11 @@ jobs:
             bundle install --jobs 4 --retry 3
         - name: Run Tests
           env:
-            PG_DATABASE: postgres
+            PG_DATABASE: pcmtest_test
             PG_HOST: localhost
             PG_USER: postgres
             PG_PASSWORD: postgres19
+            PG_PORT: 5432
             RAILS_ENV: test
             # WITH_COVERAGE: true
             # DISABLE_SPRING: 1
