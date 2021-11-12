@@ -88,8 +88,8 @@ test:
 #
 production:
   <<: *default
-  database: <%= ENV['POSTGRES_DBPROD'] %>
-  username: <%= ENV['POSTGRES_USER'] %>
-  password: <%= ENV['POSTGRES_PASSWORD'] %> 
-  port: <%= ENV['POSTGRES_PORT'] %>
-  host: <%= ENV['POSTGRES_HOST'] %>
+  database: <%= ENV['PG_DBPROD'] %>
+  username: <%= ENV['PG_USER'] %>
+  password: <%= ENV['PG_PASSWORD'] %> 
+  port: <%= ENV['PG_PORT'] %>
+  host: <%= ENV['PG_HOST'] %>
