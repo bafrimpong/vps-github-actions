@@ -1,0 +1,70 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [development]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+          postgres:
+            image: postgres:12
+            ports: ["5432:5432"]
+            env:
+              POSTGRESS_PASSWORD: postgres
+            options: >-
+              --health-cmd pg_isready 
+              --health-interval 10s 
+              --health-timeout 5s 
+              --health-retries 5
+    steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+        - name: Set up Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+            ruby-version: 2.7.4
+        - name: Install PostgreSQL 12 Client
+          run: |
+            sudo apt-get -yqq install libpq-dev
+        - name: Cache Ruby Gems
+          uses: actions/cache@v2
+          with:
+            path: vendor/bundle
+            key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-gems-
+          
+        - name: Bundle Install
+          run: |
+            bundle config path vendor/bundle
+            gem install bundler
+            bundle install --jobs 4 --retry 3
+        - name: Run Tests
+          env:
+            PG_DATABASE: pcmtest_test
+            PG_HOST: localhost
+            PG_USER: postgres
+            PG_PASSWORD: postgres19
+            # PG_PORT: 5432
+            RAILS_ENV: test
+            # WITH_COVERAGE: true
+            # DISABLE_SPRING: 1
+          run: |
+            bundle exec rails db:create
+            bundle exec rails db:migrate
+            bundel exec rails db:seed
+            bundle exec rails test
+        # - name: Upload Code Coverage
+        #   uses: actions/upload-artifact@v2
+        #   with:
+        #     name: code-coverage
+        #     path: coverage/
+        # - name: Formatting and Security Checks
+        #   run: |
+        #     bundle exec rubocop
+        #     bundle exec brakeman -z
+        #     gem install bundle-audit
+        #     bundle-audit update
+        #     bundle-audit
