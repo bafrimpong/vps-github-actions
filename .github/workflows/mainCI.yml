@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [development]
 jobs:
-  build:
+  Test-Job:
     runs-on: ubuntu-latest
     services:
           postgres:
@@ -25,7 +25,7 @@ jobs:
           uses: ruby/setup-ruby@v1
           with:
             ruby-version: 2.7.4
-        - name: Install PostgreSQL 12 client
+        - name: Install PostgreSQL 12 Client
           run: |
             sudo apt-get -yqq install libpq-dev
         - name: Cache Ruby Gems
@@ -43,11 +43,10 @@ jobs:
             bundle install --jobs 4 --retry 3
         - name: Run Tests
           env:
-            PG_DATABASE: pcmtest_test
-            PG_HOST: localhost
-            PG_USER: postgres
-            PG_PASSWORD: postgres19
-            PG_PORT: 5432
+            POSTGRES_HOST: localhost
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres19
+            POSTGRES_DATABASE: pcmtest_test
             RAILS_ENV: test
             # WITH_COVERAGE: true
             # DISABLE_SPRING: 1
