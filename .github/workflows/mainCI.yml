@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [development]
 jobs:
-  test:
+  test-ci:
     runs-on: ubuntu-latest
     services:
           postgres:
@@ -70,3 +70,35 @@ jobs:
         #     gem install bundle-audit
         #     bundle-audit update
         #     bundle-audit
+  deploy-to-scaleway: 
+    name: CD Workflow -> deploying to Scaleway VPS
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Push to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PCM_SSH_SERVER_IP }}
+          username: ${{ secrets.PCM_SSH_USERNAME }}
+          key: ${{ secrets.PCM_SSH_KEY }}
+        
+      - name: Set PostgreSQL Connection details
+        env:
+          POSTGRES_DB: ${{ secrets.REMOTE_DB_NAME }}
+          POSTGRES_HOST: ${{ secrets.PCM_SSH_SERVER_IP }}
+          POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.REMOTE_DB_PASSWORD }}
+        run: |
+          cd ${{ secrets.OS_PATH }}
+          mkdir {{ secrets.APP_PATH }}
+          cd ${{ secrets.APP_PATH }}
+          git clone git@github.com:bafrimpong/vps-github-actions.git
+          git pull origin main
+          git status
+          rbenv global ruby-2.7.4
+          bundle install
+          bundle exec rails db:setup
+          bundle exec rails db:migrate
+          bundle exec rails db:seed
+          bundle exec rails s -p 3001
