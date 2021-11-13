@@ -16,9 +16,9 @@ jobs:
               POSTGRES_USER: postgres
               POSTGRES_DB: pcmtest_test
             options: >-
-              --health-cmd pg_isready 
-              --health-interval 10s 
-              --health-timeout 5s 
+              --health-cmd pg_isready
+              --health-interval 10s
+              --health-timeout 5s
               --health-retries 5
     steps:
         - name: Checkout Repository
@@ -49,12 +49,11 @@ jobs:
         - name: Build and test with RSpec / Minitest
           env:
             RAILS_ENV: test
-            PG_HOST: localhost
-            PG_USER: postgres
-            PG_PASSWORD: postgres19
-            PG_DATABASE: pcmtest_test
-            PG_PORT: 5432
-            # PG_PORT: ${{ job.services.postgres.ports[5432] }}
+            # PG_HOST: localhost
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres19
+            # PG_DATABASE: pcmtest_test
+            # PG_PORT: 5432
           run: |
             bundle exec rails db:create
             bundle exec rails db:migrate
