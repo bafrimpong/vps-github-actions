@@ -1,4 +1,4 @@
-name: CI
+name: Ruby on Rails CI
 on:
   push:
     branches: [main]
@@ -52,7 +52,7 @@ jobs:
             POSTGRES_HOST: localhost
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres19
-            POSTGRES_DATABASE: pcmtest_test
+            # POSTGRES_DATABASE: pcmtest_test
             POSTGRES_PORT: 5432
             # PG_PORT: ${{ job.services.postgres.ports[5432] }}
           run: |
