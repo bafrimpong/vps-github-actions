@@ -1,0 +1,74 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [development]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+          postgres:
+            image: postgres:12
+            ports: ["5432:5432"]
+            env:
+              POSTGRES_PASSWORD: postgres19
+              POSTGRES_USER: postgres
+              POSTGRES_DB: pcmtest_test
+            options: >-
+              --health-cmd pg_isready
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+    steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+        - name: Set up Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+            ruby-version: 2.7.4
+        - name: Install PostgreSQL 12 Client
+          run: |
+            sudo apt-get -yqq install libpq-dev
+        - name: Cache Ruby Gems
+          uses: actions/cache@v2
+          with:
+            path: vendor/bundle
+            key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-gems-
+          
+        - name: Run Bundle Install
+          env:
+            RAILS_ENV: test
+          run: |
+            # bundle config path vendor/bundle
+            gem install bundler
+            bundle install --jobs 4 --retry 3
+        
+        - name: Build and test with RSpec / Minitest
+          env:
+            RAILS_ENV: test
+            # PG_HOST: localhost
+            PG_USER: ${{ env.POSTGRES_USER }}
+            PG_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+            # PG_DATABASE: pcmtest_test
+            # PG_PORT: 5432
+            # PG_PORT: ${{ job.services.postgres.ports[5432] }}
+          run: |
+            bundle exec rails db:create
+            bundle exec rails db:migrate
+            bundel exec rails db:seed
+            bundle exec rails test
+        # - name: Upload Code Coverage
+        #   uses: actions/upload-artifact@v2
+        #   with:
+        #     name: code-coverage
+        #     path: coverage/
+        # - name: Formatting and Security Checks
+        #   run: |
+        #     bundle exec rubocop
+        #     bundle exec brakeman -z
+        #     gem install bundle-audit
+        #     bundle-audit update
+        #     bundle-audit
