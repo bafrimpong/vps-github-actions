@@ -52,13 +52,11 @@ jobs:
             POSTGRES_HOST: localhost
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres19
-            # POSTGRES_DATABASE: pcmtest_test
             POSTGRES_PORT: 5432
-            # PG_PORT: ${{ job.services.postgres.ports[5432] }}
           run: |
             bundle exec rails db:create
             bundle exec rails db:migrate
-            bundel exec rails db:seed
+            bundle exec rails db:seed
             bundle exec rails test
         # - name: Upload Code Coverage
         #   uses: actions/upload-artifact@v2
