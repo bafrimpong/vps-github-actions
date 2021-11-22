@@ -86,7 +86,7 @@ jobs:
           username: ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: whoami
+          script: echo whoami
 
       - name: Clone App from GitHub
         env:
@@ -98,8 +98,10 @@ jobs:
           KEY: ${{ secrets.SSH_KEY }}
           RAILS_ENV: production
         run: | 
-          cd ${{ secrets.OS_USERHOME }}
+          cd \
+          cd ${{ secrets.OS_USERHOME }}/${{ secrets.APP_HOMEPATH }}
           git clone git@github.com:bafrimpong/vps-github-actions.git
+          cd vps-github-actions
           git pull origin main
           git status
           rvm use ruby-2.7.4
