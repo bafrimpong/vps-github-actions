@@ -72,16 +72,19 @@ jobs:
         #     bundle-audit
   Remote-Deployment-CD: 
     # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: Test-CI
     name: Deploy to Scaleway VPS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Push to server
+      - name: Checking out repo
+        uses: actions/checkout@v1
+
+      - name: SSH into remote server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST_IP }}
           port: 22
-          username: ${{ secrets.REMOTE_HOST_USERNAME }}
+          username: git # ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: whoami
       - name: Clone App from GitHub
