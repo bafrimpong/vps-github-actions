@@ -79,37 +79,50 @@ jobs:
       - name: Checking out repo
         uses: actions/checkout@v1
 
-      - name: SSH into remote server
+      - name: Copy Repository Content via SCP
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.REMOTE_HOST_IP }}
+          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
+          PORT: ${{ secrets.REMOTE_HOST_PORT }}
+          KEY: ${{ secrets.SSH_KEY }}
+        with:
+          source: "."
+          tartget: ${{ secrets.APP_HOMEPATH }}
+
+      - name: Execute Remote Commands via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST_IP }}
           username: ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: echo whoami
+          port: ${{ secrets.REMOTE_HOST_PORT }}
+          script: |
+            ls
 
-      - name: Clone App from GitHub
-        env:
-          POSTGRES_DB: ${{ secrets.PRODUCTION_ENV_DB }}
-          POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
-          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
-          KEY: ${{ secrets.SSH_KEY }}
-          RAILS_ENV: production
-        run: | 
-          cd \
-          cd ${{ secrets.OS_USERHOME }}/${{ secrets.APP_HOMEPATH }}
-          git clone git@github.com:bafrimpong/vps-github-actions.git
-          cd vps-github-actions
-          git pull origin main
-          git status
-          rvm use ruby-2.7.4
-          bundle install
-          bundle exec rails db:prepare
-          bundle exec rails db:migrate
-          bundle exec rails db:seed
-          bundle exec rails s -p 3001
+
+      # - name: Clone App from GitHub
+      #   env:
+      #     POSTGRES_DB: ${{ secrets.PRODUCTION_ENV_DB }}
+      #     POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
+      #     POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+      #     POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      #     USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
+      #     KEY: ${{ secrets.SSH_KEY }}
+      #     RAILS_ENV: production
+      #   run: | 
+      #     cd \
+      #     cd ${{ secrets.OS_USERHOME }}/${{ secrets.APP_HOMEPATH }}
+      #     git clone git@github.com:bafrimpong/vps-github-actions.git
+      #     cd vps-github-actions
+      #     git pull origin main
+      #     git status
+      #     rvm use ruby-2.7.4
+      #     bundle install
+      #     bundle exec rails db:prepare
+      #     bundle exec rails db:migrate
+      #     bundle exec rails db:seed
+      #     bundle exec rails s -p 3001
     # runs-on: self-hosted
 
     # steps:
