@@ -100,7 +100,7 @@ jobs:
           script: |
             cd / 
             cd ${{ secrets.APP_HOMEPATH }} && rm Gemfile.lock
-            ls 
+            ls
             rvm use ruby-2.7.4
             bundle install
             rails db:prepare
