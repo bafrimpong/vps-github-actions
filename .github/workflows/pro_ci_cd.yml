@@ -99,6 +99,14 @@ jobs:
           port: ${{ secrets.REMOTE_HOST_PORT }}
           script: |
             ls
+            rvm use ruby-2.7.4
+            cd ${{ secrets.APP_HOMEPATH }}
+            gem install
+            bundle install
+            bundle exec rails db:prepare
+            bundle exec rails db:migrate
+            bundle exec rails db:seed
+            bundle exec rails s -p 3001
 
 
       # - name: Clone App from GitHub
