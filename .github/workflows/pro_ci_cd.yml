@@ -97,11 +97,11 @@ jobs:
           username: ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.REMOTE_HOST_PORT }}
-          script: |
+          run: |
             cd /
             cd ${{ secrets.APP_HOMEPATH }}
             ls
-            rvm use ruby-2.7.4
+            # rvm use ruby-2.7.4
             sudo bundle install
             bundle exec rails db:prepare
             bundle exec rails db:migrate
