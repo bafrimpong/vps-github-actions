@@ -99,9 +99,8 @@ jobs:
           port: ${{ secrets.REMOTE_HOST_PORT }}
           script: |
             ls
-            rvm use ruby-2.7.4
             cd ${{ secrets.APP_HOMEPATH }}
-            gem install
+            rvm use ruby-2.7.4
             bundle install
             bundle exec rails db:prepare
             bundle exec rails db:migrate
