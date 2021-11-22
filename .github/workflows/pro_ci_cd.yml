@@ -1,20 +1,20 @@
-name: Ruby on Rails CI
+name: Ruby on Rails CI/CD
 on:
   push:
     branches: [main]
   pull_request:
     branches: [development]
 jobs:
-  test-ci:
+  Test-CI:
     runs-on: ubuntu-latest
     services:
           postgres:
             image: postgres:12
             ports: ["5432:5432"]
             env:
-              POSTGRES_PASSWORD: postgres19
-              POSTGRES_USER: postgres
-              POSTGRES_DB: pcmtest_test
+              POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+              POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+              POSTGRES_DB: ${{ secrets.TEST_ENV_DB }}
             options: >-
               --health-cmd pg_isready 
               --health-interval 10s 
@@ -50,9 +50,9 @@ jobs:
           env:
             RAILS_ENV: test
             POSTGRES_HOST: localhost
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres19
-            POSTGRES_PORT: 5432
+            POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+            POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            POSTGRES_PORT: ${{ secrets.DB_PORT }}
           run: |
             bundle exec rails db:create
             bundle exec rails db:migrate
@@ -70,35 +70,64 @@ jobs:
         #     gem install bundle-audit
         #     bundle-audit update
         #     bundle-audit
-  deploy-to-scaleway: 
-    name: CD Workflow -> deploying to Scaleway VPS
-    runs-on: self-hosted
-
+  Remote-Deployment-CD: 
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    name: Deploy to Scaleway VPS
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Push to server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.PCM_SSH_SERVER_IP }}
-          username: ${{ secrets.PCM_SSH_USERNAME }}
+          host: ${{ secrets.REMOTE_HOST_IP }}
+          username: ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.PCM_SSH_KEY }}
-        
-      - name: Set PostgreSQL Connection details
+      - name: Clone App from GitHub
         env:
-          POSTGRES_DB: ${{ secrets.REMOTE_DB_NAME }}
-          POSTGRES_HOST: ${{ secrets.PCM_SSH_SERVER_IP }}
-          POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.REMOTE_DB_PASSWORD }}
-        run: |
-          cd ${{ secrets.OS_PATH }}
-          mkdir {{ secrets.APP_PATH }}
-          cd ${{ secrets.APP_PATH }}
+          POSTGRES_DB: ${{ secrets.PRODUCTION_ENV_DB }}
+          POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          RAILS_ENV: production
+        run: | 
+          cd ${{ secrets.OS_USERHOME }}
           git clone git@github.com:bafrimpong/vps-github-actions.git
           git pull origin main
           git status
-          rbenv global ruby-2.7.4
+          rvm use ruby-2.7.4
           bundle install
-          bundle exec rails db:setup
+          bundle exec rails db:prepare
           bundle exec rails db:migrate
           bundle exec rails db:seed
           bundle exec rails s -p 3001
+    # runs-on: self-hosted
+
+    # steps:
+    #   - uses: actions/checkout@v1
+    #   - name: Push to server
+    #     uses: appleboy/ssh-action@master
+    #     with:
+    #       host: ${{ secrets.PCM_SSH_SERVER_IP }}
+    #       username: ${{ secrets.PCM_SSH_USERNAME }}
+    #       key: ${{ secrets.PCM_SSH_KEY }}
+        
+    #   - name: Set PostgreSQL Connection details
+    #     env:
+    #       POSTGRES_DB: ${{ secrets.REMOTE_DB_NAME }}
+    #       POSTGRES_HOST: ${{ secrets.PCM_SSH_SERVER_IP }}
+    #       POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
+    #       POSTGRES_PASSWORD: ${{ secrets.REMOTE_DB_PASSWORD }}
+    #     run: |
+    #       cd ${{ secrets.OS_PATH }}
+    #       mkdir {{ secrets.APP_PATH }}
+    #       cd ${{ secrets.APP_PATH }}
+    #       git clone git@github.com:bafrimpong/vps-github-actions.git
+    #       git pull origin main
+    #       git status
+    #       rbenv global ruby-2.7.4
+    #       bundle install
+    #       bundle exec rails db:setup
+    #       bundle exec rails db:migrate
+    #       bundle exec rails db:seed
+    #       bundle exec rails s -p 3001
