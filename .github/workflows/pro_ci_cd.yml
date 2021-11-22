@@ -101,14 +101,14 @@ jobs:
           PORT: ${{ secrets.REMOTE_HOST_PORT }}
           script: |
             cd / 
-            cd ${{ secrets.APP_HOMEPATH }} && rm Gemfile.lock && ls && rvm use ruby-2.7.4 && bundle install && rails db:prepare && rails db:migrate && rails db:seed && rails s -p 3001
-            # ls
-            # rvm use ruby-2.7.4
-            # bundle install
-            # rails db:prepare
-            # rails db:migrate
-            # rails db:seed
-            # rails s -p 3001
+            cd ${{ secrets.APP_HOMEPATH }} # && rm Gemfile.lock && ls && rvm use ruby-2.7.4 && bundle install && rails db:prepare && rails db:migrate && rails db:seed && rails s -p 3001
+            cd ${{ secrets.APP_HOMEPATH }} && ls
+            cd ${{ secrets.APP_HOMEPATH }} && rvm use ruby-2.7.4
+            cd ${{ secrets.APP_HOMEPATH }} && bundle install
+            cd ${{ secrets.APP_HOMEPATH }} && rails db:prepare
+            cd ${{ secrets.APP_HOMEPATH }} && rails db:migrate
+            cd ${{ secrets.APP_HOMEPATH }} && rails db:seed
+            cd ${{ secrets.APP_HOMEPATH }} && rails s -p 3001
 
       # - name: Clone App from GitHub
       #   env:
