@@ -71,7 +71,7 @@ jobs:
         #     bundle-audit update
         #     bundle-audit
   Remote-Deployment-CD: 
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     name: Deploy to Scaleway VPS
     runs-on: ubuntu-latest
     steps:
