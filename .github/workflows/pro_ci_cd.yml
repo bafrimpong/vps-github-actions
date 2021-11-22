@@ -83,9 +83,9 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST_IP }}
-          port: 22
           username: ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          port: 22
           script: whoami
 
       - name: Clone App from GitHub
@@ -94,6 +94,7 @@ jobs:
           POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
           POSTGRES_USER: ${{ secrets.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
           KEY: ${{ secrets.SSH_KEY }}
           RAILS_ENV: production
         run: | 
