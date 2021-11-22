@@ -81,7 +81,7 @@ jobs:
         with:
           host: ${{ secrets.REMOTE_HOST_IP }}
           username: ${{ secrets.REMOTE_HOST_USERNAME }}
-          key: ${{ secrets.PCM_SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
       - name: Clone App from GitHub
         env:
           POSTGRES_DB: ${{ secrets.PRODUCTION_ENV_DB }}
