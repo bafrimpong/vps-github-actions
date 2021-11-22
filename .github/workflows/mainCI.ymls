@@ -1,0 +1,128 @@
+name: Ruby on Rails CI/CD
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [development]
+jobs:
+  Test-CI:
+    runs-on: ubuntu-latest
+    services:
+          postgres:
+            image: postgres:12
+            ports: ["5432:5432"]
+            env:
+              POSTGRES_PASSWORD: postgres19
+              POSTGRES_USER: postgres
+              POSTGRES_DB: pcmtest_test
+            options: >-
+              --health-cmd pg_isready 
+              --health-interval 10s 
+              --health-timeout 5s 
+              --health-retries 5
+    steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+        - name: Set up Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+            ruby-version: 2.7.4
+        - name: Install PostgreSQL 12 Client
+          run: |
+            sudo apt-get -yqq install libpq-dev
+        - name: Cache Ruby Gems
+          uses: actions/cache@v2
+          with:
+            path: vendor/bundle
+            key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-gems-
+          
+        - name: Run Bundle Install
+          env:
+            RAILS_ENV: test
+          run: |
+            # bundle config path vendor/bundle
+            gem install bundler
+            bundle install --jobs 4 --retry 3
+        
+        - name: Build and test with RSpec / Minitest
+          env:
+            RAILS_ENV: test
+            POSTGRES_HOST: localhost
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres19
+            POSTGRES_PORT: 5432
+          run: |
+            bundle exec rails db:create
+            bundle exec rails db:migrate
+            bundle exec rails db:seed
+            bundle exec rails test
+        # - name: Upload Code Coverage
+        #   uses: actions/upload-artifact@v2
+        #   with:
+        #     name: code-coverage
+        #     path: coverage/
+        # - name: Formatting and Security Checks
+        #   run: |
+        #     bundle exec rubocop
+        #     bundle exec brakeman -z
+        #     gem install bundle-audit
+        #     bundle-audit update
+        #     bundle-audit
+  Remote-Deployment-CD: 
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    name: Deploy to Scaleway VPS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Push to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PCM_SSH_SERVER_IP }}
+          username: ${{ secrets.PCM_SSH_USERNAME }}
+          key: ${{ secrets.PCM_SSH_KEY }}
+      - name: Clone App from GitHub
+        run: | 
+          cd ${{ secrets.OS_PATH }}
+          mkdir {{ secrets.APP_PATH }}
+          cd ${{ secrets.APP_PATH }}
+          git clone git@github.com:bafrimpong/vps-github-actions.git
+          git pull origin main
+          git status
+          rbenv global ruby-2.7.4
+          bundle install
+          bundle exec rails db:setup
+          bundle exec rails db:migrate
+          bundle exec rails db:seed
+          bundle exec rails s -p 3001
+    # runs-on: self-hosted
+
+    # steps:
+    #   - uses: actions/checkout@v1
+    #   - name: Push to server
+    #     uses: appleboy/ssh-action@master
+    #     with:
+    #       host: ${{ secrets.PCM_SSH_SERVER_IP }}
+    #       username: ${{ secrets.PCM_SSH_USERNAME }}
+    #       key: ${{ secrets.PCM_SSH_KEY }}
+        
+    #   - name: Set PostgreSQL Connection details
+    #     env:
+    #       POSTGRES_DB: ${{ secrets.REMOTE_DB_NAME }}
+    #       POSTGRES_HOST: ${{ secrets.PCM_SSH_SERVER_IP }}
+    #       POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
+    #       POSTGRES_PASSWORD: ${{ secrets.REMOTE_DB_PASSWORD }}
+    #     run: |
+    #       cd ${{ secrets.OS_PATH }}
+    #       mkdir {{ secrets.APP_PATH }}
+    #       cd ${{ secrets.APP_PATH }}
+    #       git clone git@github.com:bafrimpong/vps-github-actions.git
+    #       git pull origin main
+    #       git status
+    #       rbenv global ruby-2.7.4
+    #       bundle install
+    #       bundle exec rails db:setup
+    #       bundle exec rails db:migrate
+    #       bundle exec rails db:seed
+    #       bundle exec rails s -p 3001
