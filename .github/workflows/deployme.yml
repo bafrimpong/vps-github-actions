@@ -10,7 +10,10 @@ jobs:
     name: Deploy
     runs-on: ubuntu-20.04
     steps:
-      - name: Testing test.prochezmoi.com with ssh connection
+      - name: Checkout GitHub Repo
+        uses: actions/checkout@v1
+
+      - name: Push to Scaleway Server via SSH
         uses: appleboy/ssh-action@master
         env:
           POSTGRES_DB: ${{ secrets.TEST_ENV_DB }}
