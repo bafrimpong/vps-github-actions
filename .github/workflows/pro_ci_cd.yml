@@ -109,7 +109,7 @@ jobs:
           script: |
             cd / 
             cd ${{ secrets.APP_HOMEPATH }}
-            bundle install
+            cd ${{ secrets.APP_HOMEPATH }} && bundle install
             ls
             bundle exec rails db:prepare
             bundle exec rails db:migrate
