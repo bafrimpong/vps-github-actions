@@ -19,18 +19,18 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           RAILS_ENV: test
         with:
-          host: test.prochezmoi.com
-          username: root
+          host: ${{ secrets.REMOTE_HOST_IP }}
+          username: ${{ secrets.REMOTE_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.REMOTE_HOST_PORT }}
           envs: POSTGRES_DB, 
           script: |
+            echo $POSTGRES_DB
             cd /
-            cd home/pcmadmin/vps-github-actions
-            git pull origin main
-            git status
-            bundle install
-            rails db:prepare
-            rails db:migrate
-            rails db:seed
-            rails s -p 3001
+            cd ${{ secrets.APP_HOMEPATH }} && git pul origin main
+            cd ${{ secrets.APP_HOMEPATH }} && git status
+            cd ${{ secrets.APP_HOMEPATH }} && bundle install
+            cd ${{ secrets.APP_HOMEPATH }} && bin/rails db:prepare
+            cd ${{ secrets.APP_HOMEPATH }} && bin/rails db:migrate
+            cd ${{ secrets.APP_HOMEPATH }} && bin/rails db:seed
+            cd ${{ secrets.APP_HOMEPATH }} && bin/rails s -p 3001
