@@ -75,19 +75,19 @@ jobs:
   Remote-Deployment-CD: 
     # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     # needs: Test-CI
-    name: Deploy to Scaleway VPS
+    name: Deploy to VPS
     runs-on: ubuntu-20.04
     steps:
-      - name: Checking out repo
-        uses: actions/checkout@v1
+      - name: Checkout repo
+        uses: actions/checkout@v2
 
-      - name: Copy Repository Content via SCP
+      - name: Copy repo via scp
         uses: appleboy/scp-action@master
         env:
-          HOST: ${{ secrets.REMOTE_HOST_IP }}
-          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
-          PORT: ${{ secrets.REMOTE_HOST_PORT }}
-          KEY: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.REMOTE_HOST_IP }}
+          username: ${{ secrets.REMOTE_HOST_USERNAME }}
+          port: ${{ secrets.REMOTE_HOST_PORT }}
+          key: ${{ secrets.SSH_KEY }}
         with:
           source: "."
           target: ${{ secrets.APP_HOMEPATH }}
@@ -101,16 +101,17 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           RAILS_ENV: test
         with:
-          HOST: ${{ secrets.REMOTE_HOST_IP }}
-          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
-          KEY: ${{ secrets.SSH_KEY }}
-          PORT: ${{ secrets.REMOTE_HOST_PORT }}
+          host: ${{ secrets.REMOTE_HOST_IP }}
+          username: ${{ secrets.REMOTE_HOST_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.REMOTE_HOST_PORT }}
+          stop_script: true
           script: |
             cd / 
-            gem install bundler
-            cd ${{ secrets.APP_HOMEPATH }} && rm Gemfile.lock && ls  
-            cd ${{ secrets.APP_HOMEPATH }} && bundle install
-            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:prepare
-            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:migrate
-            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:seed
-            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails s -p 3001
+            cd ${{ secrets.APP_HOMEPATH }}
+            bundle install
+            ls
+            bundle exec rails db:prepare
+            bundle exec rails db:migrate
+            bundle exec rails db:seed
+            bundle exec rails s -p 3001
