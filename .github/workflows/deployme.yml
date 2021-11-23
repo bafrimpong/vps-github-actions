@@ -30,7 +30,7 @@ jobs:
           script: |
             echo "DB NAME $POSTGRES_DB"
             cd /
-            cd ${{ secrets.APP_HOMEPATH }} && git clone git@github.com:bafrimpong/vps-github-actions.git
+            cd ${{ secrets.APP_HOMEPATH }} && git pull origin main
             cd ${{ secrets.APP_HOMEPATH }} && git status
             cd ${{ secrets.APP_HOMEPATH }} && bundle install
             cd ${{ secrets.APP_HOMEPATH }} && bin/rails db:prepare
