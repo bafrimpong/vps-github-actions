@@ -1,8 +1,9 @@
 <style>
   .head-color {
-    color: darkred;
+    color: red;
+    font-size: 22;
     text-transform: uppercase;
-    font-weight: 22;
+    font-weight: bold;
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
@@ -17,5 +18,6 @@
 
 <% @welcome.each do | welc | %>
 <h1 class="head-color"><%= welc.try(:header_text) %></h1>
+<hr style="margin: 0 auto 0 auto; width: 50%;" />
 <p class="paragraph"><%= welc.try(:page_text) %></p>
 <% end %>
