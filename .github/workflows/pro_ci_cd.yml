@@ -103,8 +103,6 @@ jobs:
             cd / 
             cd ${{ secrets.APP_HOMEPATH }}
             cd ${{ secrets.APP_HOMEPATH }} && ls
-            # cd ${{ secrets.APP_HOMEPATH }} && rvm use ruby-2.7.4
-            # cd ${{ secrets.APP_HOMEPATH }} && bundle install
             cd ${{ secrets.APP_HOMEPATH }} && rails db:prepare
             cd ${{ secrets.APP_HOMEPATH }} && rails db:migrate
             cd ${{ secrets.APP_HOMEPATH }} && rails db:seed
