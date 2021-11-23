@@ -115,8 +115,8 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           RAILS_ENV: test
         run: | 
-          cd / 
           cd ${{ secrets.APP_HOMEPATH }} && ls
+        # cd / 
         # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:prepare
         # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:migrate
         # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:seed
