@@ -117,10 +117,10 @@ jobs:
         run: | 
           cd / 
           cd ${{ secrets.APP_HOMEPATH }} && ls
-          cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:prepare
-          cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:migrate
-          cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:seed
-          cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails s -p 3001
+        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:prepare
+        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:migrate
+        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:seed
+        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails s -p 3001
       # - name: Clone App from GitHub
       #   env:
       #     POSTGRES_DB: ${{ secrets.PRODUCTION_ENV_DB }}
