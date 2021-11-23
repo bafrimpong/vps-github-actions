@@ -1,0 +1,36 @@
+name: Ruby on Rails Deployment
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [development]
+
+jobs:
+  job_one:
+    name: Deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Testing test.prochezmoi.com with ssh connection
+        uses: appleboy/ssh-action@master
+        env:
+          POSTGRES_DB: ${{ secrets.TEST_ENV_DB }}
+          POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          RAILS_ENV: test
+        with:
+          host: test.prochezmoi.com
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.REMOTE_HOST_PORT }}
+          envs: POSTGRES_DB, 
+          script: |
+            cd /
+            cd home/pcmadmin/vps-github-actions
+            git pull origin main
+            git status
+            bundle install
+            rails db:prepare
+            rails db:migrate
+            rails db:seed
+            rails s -p 3001
