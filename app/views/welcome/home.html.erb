@@ -1,5 +1,21 @@
+<style>
+  .head-color {
+    color: "red";
+    font-weight: 700;
+    text-decoration: underline;
+    text-align: center;
+    text-shadow: rgba(rgb(236, 188, 188), rgb(61, 77, 61), rgb(161, 161, 212), 0.5);
+  }
+
+  .paragraph {
+        text-align: center;
+        font-size: 14px;
+        font-style: normal;
+        margin: 15px;
+  }
+</style>
 
 <% @welcome.each do | welc | %>
-        <h1><%= welc.try(:header_text) %></h1>
-        <p><%= welc.try(:page_text) %></p>
+<h1 class="head-color"><%= welc.try(:header_text) %></h1>
+<p class="paragraph"><%= welc.try(:page_text) %></p>
 <% end %>
