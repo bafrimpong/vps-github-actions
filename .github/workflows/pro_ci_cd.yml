@@ -94,6 +94,12 @@ jobs:
 
       - name: Execute Remote Commands via SSH
         uses: appleboy/ssh-action@master
+        env:
+          POSTGRES_DB: ${{ secrets.TEST_ENV_DB }}
+          POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          RAILS_ENV: test
         with:
           HOST: ${{ secrets.REMOTE_HOST_IP }}
           USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
@@ -101,26 +107,31 @@ jobs:
           PORT: ${{ secrets.REMOTE_HOST_PORT }}
           script: |
             cd / 
-            cd ${{ secrets.APP_HOMEPATH }} && ls
+            cd ${{ secrets.APP_HOMEPATH }} && rm Gemfile.lock && ls  
+            cd ${{ secrets.APP_HOMEPATH }} && bundle install
+            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:prepare
+            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:migrate
+            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:seed
+            cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails s -p 3001
 
-      - name: Prpare DB and Start Rails Server
-        env:
-          HOST: ${{ secrets.REMOTE_HOST_IP }}
-          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
-          PORT: ${{ secrets.REMOTE_HOST_PORT }}
-          KEY: ${{ secrets.SSH_KEY }}
-          POSTGRES_DB: ${{ secrets.TEST_ENV_DB }}
-          POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
-          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          RAILS_ENV: test
-        run: | 
-          cd ${{ secrets.APP_HOMEPATH }} && ls
-        # cd / 
-        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:prepare
-        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:migrate
-        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails db:seed
-        # cd ${{ secrets.APP_HOMEPATH }} && bundle exec rails s -p 3001
+      # - name: Prpare DB and Start Rails Server
+      #   env:
+      #     HOST: ${{ secrets.REMOTE_HOST_IP }}
+      #     USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
+      #     PORT: ${{ secrets.REMOTE_HOST_PORT }}
+      #     KEY: ${{ secrets.SSH_KEY }}
+      #     POSTGRES_DB: ${{ secrets.TEST_ENV_DB }}
+      #     POSTGRES_HOST: ${{ secrets.REMOTE_HOST_IP }}
+      #     POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+      #     POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      #     RAILS_ENV: test
+        # run: | 
+        # 
+        # 
+        # 
+        # 
+        # 
+        # 
       # - name: Clone App from GitHub
       #   env:
       #     POSTGRES_DB: ${{ secrets.PRODUCTION_ENV_DB }}
