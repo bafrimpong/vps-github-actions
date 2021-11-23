@@ -84,10 +84,10 @@ jobs:
       - name: Copy repo via scp
         uses: appleboy/scp-action@master
         env:
-          host: ${{ secrets.REMOTE_HOST_IP }}
-          username: ${{ secrets.REMOTE_HOST_USERNAME }}
-          port: ${{ secrets.REMOTE_HOST_PORT }}
-          key: ${{ secrets.SSH_KEY }}
+          HOST: ${{ secrets.REMOTE_HOST_IP }}
+          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
+          PORT: ${{ secrets.REMOTE_HOST_PORT }}
+          KEY: ${{ secrets.SSH_KEY }}
         with:
           source: "."
           target: ${{ secrets.APP_HOMEPATH }}
@@ -101,10 +101,10 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           RAILS_ENV: test
         with:
-          host: ${{ secrets.REMOTE_HOST_IP }}
-          username: ${{ secrets.REMOTE_HOST_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.REMOTE_HOST_PORT }}
+          HOST: ${{ secrets.REMOTE_HOST_IP }}
+          USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
+          KEY: ${{ secrets.SSH_KEY }}
+          PORT: ${{ secrets.REMOTE_HOST_PORT }}
           stop_script: true
           script: |
             cd / 
