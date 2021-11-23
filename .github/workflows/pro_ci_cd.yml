@@ -105,7 +105,7 @@ jobs:
           USERNAME: ${{ secrets.REMOTE_HOST_USERNAME }}
           KEY: ${{ secrets.SSH_KEY }}
           PORT: ${{ secrets.REMOTE_HOST_PORT }}
-          stop_script: true
+          script_stop: true
           script: |
             cd / 
             cd ${{ secrets.APP_HOMEPATH }}
